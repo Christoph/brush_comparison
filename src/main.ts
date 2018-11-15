@@ -4,7 +4,8 @@ import {Aurelia} from 'aurelia-framework'
 import environment from './environment';
 import {PLATFORM} from 'aurelia-pal';
 import * as Bluebird from 'bluebird';
-import 'materialize-css'
+import 'materialize-css';
+import { initialState } from './store/state';
 
 // remove out if you don't want a Promise polyfill (remove also from webpack.config.js)
 Bluebird.config({ warnings: { wForgottenReturn: false } });
@@ -27,6 +28,8 @@ export function configure(aurelia: Aurelia) {
   if (environment.testing) {
     aurelia.use.plugin(PLATFORM.moduleName('aurelia-testing'));
   }
+
+  aurelia.use.plugin(PLATFORM.moduleName("aurelia-store"), { initialState });
 
   return aurelia.start().then(() => aurelia.setRoot(PLATFORM.moduleName('app')));
 }

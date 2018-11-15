@@ -1,5 +1,8 @@
 <template>
   <require from="materialize-css/dist/css/materialize.css"></require>
   <h1>${message}</h1>
-  <button md-button click.trigger="showToast()">Materialize Button</button>
+  <button md-button click.trigger="add()">Materialize Button</button>
+  <ul>
+    <li repeat.for="framework of state.data">${framework}</li>
+  </ul>
 </template>

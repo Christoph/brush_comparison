@@ -1,7 +1,9 @@
 export interface State {
-    data: string[];
+    data: number[][];
+    select: number[][];
 }
 
 export const initialState: State = {
-    data: ["a", "b"]
+    data: [[1,2], [3,4]],
+    select: [],
 };

@@ -10,8 +10,10 @@ import { update } from 'store/actions/data';
 export class App {
   public state: State;
 
+  public plot_data = [[1,2],[2,3]]
+
   add() {
-    dispatchify(update)("asd");
+    dispatchify(update)([4,5]);
   }
 
   message = 'Hello World!';

@@ -46,7 +46,7 @@ module.exports = ({production, server, extractCss, coverage, analyze, karma} = {
   optimization: {
     // Use splitChunks to breakdown the vendor bundle into smaller files
     // https://webpack.js.org/plugins/split-chunks-plugin/
-    splitChunks: { 
+    splitChunks: {
       chunks: "initial",
       cacheGroups: {
         default: false, // Disable the built-in groups (default and vendors)

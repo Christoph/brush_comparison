@@ -2,7 +2,13 @@
   <require from="materialize-css/dist/css/materialize.css"></require>
   <h1>${message}</h1>
   <button md-button click.trigger="add()">Materialize Button</button>
+  points
   <ul>
     <li repeat.for="framework of state.data">${framework}</li>
   </ul>
+  select
+  <ul>
+    <li repeat.for="framework of state.select">${framework}</li>
+  </ul>
+  <scatter-plot data.bind="plot_data"></scatter-plot>
 </template>

@@ -1,13 +1,13 @@
 import * as d3 from "d3";
-import {inject, noView, bindable} from 'aurelia-framework';
+import {inject, noView } from 'aurelia-framework';
 import * as _ from "lodash"
 
-import { connectTo, dispatchify  } from 'aurelia-store';
+import { DataStore } from 'data-store';
+
+import { connectTo } from 'aurelia-store';
 import { State } from 'store/state';
 
-import { select } from 'store/actions/data';
-
-@inject(Element)
+@inject(Element, DataStore)
 @noView()
 @connectTo()
 export class ScatterPlotCustomElement{
@@ -23,11 +23,11 @@ export class ScatterPlotCustomElement{
   width = 600 - this.margin.left - this.margin.right;
   height = 500 - this.margin.top - this.margin.bottom;
 
-  constructor(public element: Element) {
+  constructor(public element: Element, public store: DataStore) {
     this.initChart();
   }
 
-  stateChanged(newState: State, oldState: State) {
+  stateChanged(newState: State) {
     // this.svg.selectAll(".point").remove();
     this.updateChart(newState);
   }
@@ -64,6 +64,9 @@ export class ScatterPlotCustomElement{
   updateChart(state) {
     let self = this;
 
+    let data = this.store.getElectionData("nrw2017");
+    let values = Object.values(data)
+
     // Update domains
     this.x.domain(d3.extent(state.data, function(d) { return +d[0] }));
     this.y.domain(d3.extent(state.data, function(d) { return +d[1] }));
@@ -83,7 +86,7 @@ export class ScatterPlotCustomElement{
       .append("circle")
       .attr("class", "point")
       .on("click", function(d) {
-        dispatchify(select)(d)
+        // dispatchify(select)(d)
       })
       .merge(chart)
         .transition(1000)

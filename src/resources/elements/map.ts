@@ -2,20 +2,17 @@ import * as d3 from "d3";
 import {inject, noView} from 'aurelia-framework';
 import * as _ from "lodash"
 
-import { connectTo, dispatchify  } from 'aurelia-store';
+import { connectTo } from 'aurelia-store';
 import { State } from 'store/state';
+import { DataStore } from 'data-store';
 
-// import * as zoning from '../../../data/sf_geo.json';
-// import * as zoning from '../../../data/zoning.json';
-// import * as zoning from '../../../data/laender_95_geo.json';
-import * as zoning from '../../../data/gemeinden_95_geo.json';
-import * as wahl from '../../../data/wahl.json';
 
-@inject(Element)
+@inject(Element, DataStore)
 @noView()
 @connectTo()
 export class MapCustomElement{
   public state: State;
+  public geojson;
 
   // D3 variables
   private svg;
@@ -26,11 +23,13 @@ export class MapCustomElement{
   width = 900 - this.margin.left - this.margin.right;
   height = 900 - this.margin.top - this.margin.bottom;
 
-  constructor(public element: Element) {
+  constructor(public element: Element, public store: DataStore) {
+    this.geojson = store.getGeoJson()
+
     this.initChart();
   }
 
-  stateChanged(newState: State, oldState: State) {
+  stateChanged(newState: State) {
     // this.svg.selectAll(".point").remove();
     this.updateChart(newState);
   }
@@ -49,36 +48,33 @@ export class MapCustomElement{
 
     // Projection
     var projection = d3.geoMercator()
-      .fitExtent([[0, 0], [this.width, this.height]], zoning["default"])
+      .fitExtent([[0, 0], [this.width, this.height]], this.geojson)
 
     this.path = d3.geoPath()
       .projection(projection);
   }
 
   updateChart(state) {
-    let property = "abgegeben";
-
-    let data = wahl["default"]["nrw2017"]
+    let data = this.store.getElectionData("nrw2017");
     let values = Object.values(data)
 
     let extent = d3.extent(values, function(d) {
-      return +d[property]
+      return +d[state.selectedProperty]
     })
 
-    let color = d3.scaleLog<string>()
+    let color = d3.scaleLinear<string>()
               .domain(extent)
-              .range(['#d73027', '#fee08b'])
+              .range(['#D7DFE7', '#0E1F2E'])
               .interpolate(d3.interpolateHcl);
 
     this.svg.selectAll('path')
-      .data(zoning["features"])
+      .data(this.geojson["features"])
     .enter().append('path')
       .attr('d', this.path)
+      .merge(this.svg.selectAll('path'))
       .style("fill", function(d) {
-        // console.log(d.properties.iso)
-        // console.log(data[d.properties.iso])
         if(data[d.properties.iso]) {
-          return color(data[d.properties.iso][property])
+          return color(data[d.properties.iso][state.selectedProperty])
         }
         else {
           return "white"

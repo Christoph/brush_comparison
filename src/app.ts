@@ -1,19 +1,26 @@
 import { autoinject } from 'aurelia-dependency-injection';
+import { DataStore } from 'data-store';
+
 import { connectTo, dispatchify  } from 'aurelia-store';
 import { State } from 'store/state';
-
-import { update } from 'store/actions/data';
+import { selectProperty } from 'store/actions/data';
 
 
 @autoinject()
 @connectTo()
 export class App {
   public state: State;
+  public properties;
+  public selected_property;
 
-  public plot_data = [[1,2],[2,3]]
+  constructor(public store: DataStore) {
+    this.properties = this.store.getElectionFields()
+    this.selected_property = this.properties[0]
+    dispatchify(selectProperty)(this.selected_property);
+  }
 
-  add() {
-    dispatchify(update)([4,5]);
+  PropertySelected() {
+    dispatchify(selectProperty)(this.selected_property);
   }
 
   message = 'Hello World!';

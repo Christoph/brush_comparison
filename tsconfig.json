@@ -5,6 +5,7 @@
     "module": "esnext",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
+    "resolveJsonModule": true,
     "moduleResolution": "node",
     "sourceRoot": "src",
     "sourceMap": true,

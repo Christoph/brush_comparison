@@ -9,6 +9,7 @@ import { State } from 'store/state';
 // import * as zoning from '../../../data/zoning.json';
 // import * as zoning from '../../../data/laender_95_geo.json';
 import * as zoning from '../../../data/gemeinden_95_geo.json';
+import * as wahl from '../../../data/wahl.json';
 
 @inject(Element)
 @noView()
@@ -55,10 +56,34 @@ export class MapCustomElement{
   }
 
   updateChart(state) {
+    let property = "abgegeben";
+
+    let data = wahl["default"]["nrw2017"]
+    let values = Object.values(data)
+
+    let extent = d3.extent(values, function(d) {
+      return +d[property]
+    })
+
+    let color = d3.scaleLog<string>()
+              .domain(extent)
+              .range(['#d73027', '#fee08b'])
+              .interpolate(d3.interpolateHcl);
+
     this.svg.selectAll('path')
       .data(zoning["features"])
     .enter().append('path')
       .attr('d', this.path)
+      .style("fill", function(d) {
+        // console.log(d.properties.iso)
+        // console.log(data[d.properties.iso])
+        if(data[d.properties.iso]) {
+          return color(data[d.properties.iso][property])
+        }
+        else {
+          return "white"
+        }
+      })
       .attr('vector-effect', 'non-scaling-stroke')
       .style("stroke", "white")
   }

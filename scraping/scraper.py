@@ -67,7 +67,6 @@ def retry_missed():
         "../data/STA_RA_data.csv")
 
 
-retry_missed()
-
+# retry_missed()
 scrape(["2015", "2016", "2017"])
 # scrape(["2007", "2008", "2009", "2010", "2011", "2012", "2013", "2014", "2015", "2016", "2017"])

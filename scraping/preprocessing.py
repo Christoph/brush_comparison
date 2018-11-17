@@ -9,7 +9,7 @@ def prepare_election_data(election):
     wahl = wahl.drop(["GKZ"], axis=1)
     wahl.iloc[0][wahl.columns[0:-1]].to_dict()
 
-    gkz_wahl = {row["gkz"]: row[wahl.columns[0:-1]].to_dict()
+    gkz_wahl = {str(row["gkz"]): row[wahl.columns[0:-1]].to_dict()
                 for (index, row) in wahl.iterrows()}
 
     return gkz_wahl
@@ -26,6 +26,10 @@ def save_election_data(wahlen=["nrw2017", "nrw2013", "nrw2008"]):
         json.dump(output_wahl, fp)
 
 
+def jdefault(o):
+    return o.__dict__
+
+
 # Save money data ready for D3
 def save_money_data():
     # Load scraped data
@@ -39,31 +43,33 @@ def save_money_data():
     for gkz, group in grouped:
         element = {}
         rechnugngsliste = {}
-        temp = []
+        temp = {}
         einnahmen_ausgaben = {}
         aggregation = {}
         for n in ausgaben_namen:
             aggregation[n] = 0
 
         for id, row in group.iterrows():
-            temp.append(row)
+            temp[id] = row.to_dict()
 
             ausgaben_typ = row["haushaltskonto-hinweis-name"]
             aggregation[ausgaben_typ] = aggregation[ausgaben_typ] + float(
                 row["soll-rj"].replace(",", "."))
 
-        year = temp[0]["jahr"]
-        rechnugngsliste[str(year)] = temp
+        year = next(iter(temp.values()))["jahr"]
+        rechnugngsliste[year] = temp
 
-        einnahmen_ausgaben[str(year)] = aggregation
+        einnahmen_ausgaben[year] = aggregation
 
         element["gkz"] = gkz
-        element["rechnugngsliste"] = rechnugngsliste
+        # element["rechnugngsliste"] = rechnugngsliste
         element["einnahmen_ausgaben"] = einnahmen_ausgaben
 
-        output_data[str(gkz)] = element
+        output_data[gkz] = element
 
     with open("../data/money.json", 'w') as fp:
         json.dump(output_data, fp)
 
+
+# save_election_data()
 save_money_data()

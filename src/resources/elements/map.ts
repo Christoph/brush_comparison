@@ -68,9 +68,6 @@ export class MapCustomElement{
               .range(['#D7DFE7', '#0E1F2E'])
               .interpolate(d3.interpolateHcl);
 
-    console.log(color(0))
-    console.log(color(1))
-
     this.svg.selectAll('path')
       .data(this.geojson["features"])
     .enter().append('path')

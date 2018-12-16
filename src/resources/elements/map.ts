@@ -63,9 +63,13 @@ export class MapCustomElement{
     })
 
     let color = d3.scaleLinear<string>()
-              .domain(extent)
+              // .domain(extent)
+              .domain([0, 1])
               .range(['#D7DFE7', '#0E1F2E'])
               .interpolate(d3.interpolateHcl);
+
+    console.log(color(0))
+    console.log(color(1))
 
     this.svg.selectAll('path')
       .data(this.geojson["features"])
@@ -74,7 +78,7 @@ export class MapCustomElement{
       .merge(this.svg.selectAll('path'))
       .style("fill", function(d) {
         if(data[d.properties.iso]) {
-          return color(data[d.properties.iso][state.selectedProperty])
+          return color(parseFloat(data[d.properties.iso][state.selectedProperty])/parseFloat(data[d.properties.iso]["abgegeben"]))
         }
         else {
           return "white"
@@ -82,5 +86,10 @@ export class MapCustomElement{
       })
       .attr('vector-effect', 'non-scaling-stroke')
       .style("stroke", "white")
+      .on("mouseover", function(d) {
+        // console.log(parseFloat(data[d.properties.iso][state.selectedProperty]))
+        // console.log(parseFloat(data[d.properties.iso]["abgegeben"]))
+        // console.log()
+      })
   }
 }
